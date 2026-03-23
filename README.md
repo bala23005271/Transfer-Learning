@@ -2,44 +2,41 @@
 ## Aim
 To Implement Transfer Learning for classification using VGG-19 architecture.
 ## Problem Statement and Dataset
-Develop an image classification model using transfer learning with the pre-trained VGG19 model. 
+
+This experiment demonstrates transfer learning using a pre-trained ResNet18 model on a custom image dataset. Instead of training a deep neural network from scratch, the pre-trained model’s feature extraction layers are reused, and only the final classification layer is retrained. This approach reduces training time, requires less data, and achieves high accuracy.
 
 ## DESIGN STEPS
 ### STEP 1:
-Import required libraries.Then dataset is loaded and define the training and testing dataset.
+Data Preprocessing – Resize all images to 224×224 and convert them into tensors suitable for ResNet input.
 
-### STEP 2:
-initialize the model,loss function,optimizer. CrossEntropyLoss for multi-class classification and Adam optimizer for efficient training.
+### STEP 2: 
+Dataset Loading – Organize images into train/test sets and load them using ImageFolder and DataLoader.
 
 ### STEP 3:
-Train the model with training dataset.
+Load Pretrained Model – Use ResNet18 trained on ImageNet as the base model.
 
 ### STEP 4:
-Evaluate the model with testing dataset.
+Modify Final Layer – Freeze earlier layers and replace the fully connected layer to match the number of dataset classes.
 
 ### STEP 5:
-Make Predictions on New Data.
+Train and Evaluate – Train only the final layer, then test the model and analyze results using a confusion matrix and classification report.
 
 ## PROGRAM
 ```python
 # Load Pretrained Model and Modify for Transfer Learning
-# Load a pre-trained VGG19 model
-from torchvision.models import VGG19_Weights
-model = models.vgg19(weights = VGG19_Weights.DEFAULT)
-
-
+model = models.vgg19(weights=models.VGG19_Weights.IMAGENET1K_V1)
 
 # Modify the final fully connected layer to match the dataset classes
-in_features = model.classifier[-1].in_features
-model.classifier[-1] = nn.Linear(in_features, len(train_dataset.classes))
+for param in model.parameters():
+    param.requires_grad = False   # freeze earlier layers
+model.fc = nn.Linear(model.fc.in_features, num_classes)
 
-
-# Include the Loss function and optimizer
+# Loss function and optimizer
 criterion = nn.CrossEntropyLoss()
-optimizer = optim.Adam(model.parameters(), lr=0.001)
+optimizer = optim.Adam(model.fc.parameters(), lr=0.001)
 
-
-# Train the model
+```
+```python
 def train_model(model, train_loader,test_loader,num_epochs=10):
     train_losses = []
     val_losses = []
@@ -72,7 +69,8 @@ def train_model(model, train_loader,test_loader,num_epochs=10):
         print(f'Epoch [{epoch+1}/{num_epochs}], Train Loss: {train_losses[-1]:.4f}, Validation Loss: {val_losses[-1]:.4f}')
 
     # Plot training and validation loss
-
+    print("Name:bala murugan s")
+    print("Register Number:  212223230027")
     plt.figure(figsize=(8, 6))
     plt.plot(range(1, num_epochs + 1), train_losses, label='Train Loss', marker='o')
     plt.plot(range(1, num_epochs + 1), val_losses, label='Validation Loss', marker='s')
@@ -81,24 +79,25 @@ def train_model(model, train_loader,test_loader,num_epochs=10):
     plt.title('Training and Validation Loss')
     plt.legend()
     plt.show()
-
-
 ```
 
 ## OUTPUT
 ### Training Loss, Validation Loss Vs Iteration Plot
-![image](https://github.com/user-attachments/assets/4148312f-b743-44ff-9772-7fd5ca11668b)
+<img width="953" height="711" alt="Screenshot 2026-03-23 211143" src="https://github.com/user-attachments/assets/cda1ccc7-10e0-48a2-b85f-46e593e88a9b" />
+
 
 ### Confusion Matrix
-![Screenshot 2025-03-23 225807](https://github.com/user-attachments/assets/61db2f24-c58b-4bab-a30b-43e730816bf9)
+<img width="574" height="476" alt="Screenshot 2026-03-23 211342" src="https://github.com/user-attachments/assets/1c05b16f-dd46-4499-8510-71876902395c" />
+
 
 ### Classification Report
-![image](https://github.com/user-attachments/assets/7dda420e-571d-47f0-b860-a8f44b304e68)
+<img width="436" height="195" alt="Screenshot 2026-03-23 211405" src="https://github.com/user-attachments/assets/79c82f74-f583-4bd8-9b97-20ef445d2fe6" />
+
 
 ### New Sample Prediction
+<img width="442" height="362" alt="Screenshot 2026-03-23 211502" src="https://github.com/user-attachments/assets/941e1ef2-aa5d-49d3-925e-2f75829f5d57" />
 
-![image](https://github.com/user-attachments/assets/209889cb-9cbf-4044-85b7-c96d646c7dda)
+<img width="434" height="360" alt="Screenshot 2026-03-23 211515" src="https://github.com/user-attachments/assets/e0fb077a-5c97-4d86-8383-b07619ee2812" />
 
 ## RESULT
-Thus, the transfer Learning for classification using VGG-19 architecture has succesfully implemented.
-
+The Implementation of Transfer Learning for classification using VGG-19 architecture is successful.
